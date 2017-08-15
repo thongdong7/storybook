@@ -52,30 +52,20 @@ jobs:
     <<: *defaults
     steps:
       - run:
-          name: "Running kitchen-sink"
+          name: "Building Vue example"
           command: |
             echo "TODO"
-  example-test-cra:
+  example-vue:
     <<: *defaults
     steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - root-dependencies-{{ checksum "package.json" }}
-            - root-dependencies-
       - run:
-          name: "Install root dependencies"
+          name: "Build React example"
           command: |
-            yarn install
+            cd examples/cra-kitchen-sink && npm run build-storybook
       - run:
-          name: "Bootstrapping"
+          name: "Deploy React example"
           command: |
-            npm run bootstrap
-            npm run bootstrap:test-cra
-      - run:
-          name: "Running test-cra"
-          command: |
-            echo "TODO"
+            cd examples/cra-kitchen-sink && npm run build-storybook
   example-react-native:
     <<: *defaults
     steps:
@@ -171,15 +161,15 @@ workflows:
     jobs:
       - validate
       - build
-      - example-kitchen-sink
-      - example-test-cra
+      - example-react
+      - example-vue
       - example-react-native
       - docs
       - lint
       - unit-test
-      - deploy:
-          type: approval
-          requires:
-            - lint
-            - unit-test
-            - docs
+      # - deploy:
+      #     type: approval
+      #     requires:
+      #       - lint
+      #       - unit-test
+      #       - docs
